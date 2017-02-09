@@ -1,4 +1,18 @@
 <resources>
-    <string name="app_name">Filozofski Fakultet Pale</string>
+    <string name="app_name">СЕКРЕТАРСКИ МОДУЛ</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="wellcome">ДОБРОДОШЛИ</string>
+    <string name="schedules">РАСПОРЕДИ</string>
+    <string name="login">ПРИЈАВА</string>
+    <string name="searchBy">Претражи распореде по</string>
+    <string name="searchByStudyPrograms">СТУДИЈСКОМ ПРОГРАМУ</string>
+    <string name="searchByTeachers">НАСТАВНИКУ</string>
+    <string name="searchByClassRooms">УЧИОНИЦИ</string>
+
+    <string name="StudyPrograms">СТУДИЈСКИ ПРОГРАМ</string>
+    <string name="Teachers">НАСТАВНИК</string>
+    <string name="ClassRooms">УЧИОНИЦА</string>
+
+
+
 </resources>
