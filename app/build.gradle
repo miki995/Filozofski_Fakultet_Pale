@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.inc.miki.filozofski_falutet_pale"
-        minSdkVersion 9
+        minSdkVersion 11
         targetSdkVersion 24
         versionCode 14
         versionName "2.2"

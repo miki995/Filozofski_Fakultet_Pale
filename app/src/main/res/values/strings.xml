@@ -13,6 +13,15 @@
     <string name="Teachers">НАСТАВНИК</string>
     <string name="ClassRooms">УЧИОНИЦА</string>
 
+    <string name="firstYear">ПРВА ГОДИНА</string>
+    <string name="secondYear">ДРУГА ГОДИНА</string>
+    <string name="thirdYear">ТРЕЋА ГОДИНА</string>
+    <string name="fourthYear">ЧЕТВРТА ГОДИНА</string>
+    <string name="scheduleForWeek">РАСПОРЕД ЗА СЕДМИЦУ</string>
+
+
+
+
 
 
 </resources>

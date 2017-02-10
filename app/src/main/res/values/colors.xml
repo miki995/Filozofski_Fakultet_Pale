@@ -5,5 +5,9 @@
     <color name="colorAccent">#FF4081</color>
     <color name="Blue">#0769f0</color>
 
+    <color name="clickedBackground">#b3b8bf</color>
+    <color name="standardBackground">#cbd1db</color>
+
+
 
 </resources>

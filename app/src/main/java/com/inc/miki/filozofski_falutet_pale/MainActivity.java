@@ -8,15 +8,16 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    public void GoToSchedules(View v)
+    {
+        Intent intent = new Intent(this, SchedulesActivity.class);
+        startActivity(intent);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.homePage);
+        setContentView(R.layout.home_page);
 
     }
-    public void GoToSchedules(View v)
-    {
-        startActivity(new Intent(this,SchedulesActivity.class));
-    }
+
 }

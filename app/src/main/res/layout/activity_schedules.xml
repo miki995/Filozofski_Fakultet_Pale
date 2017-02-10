@@ -1,15 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:id="@+id/RelativeLayout1"
-    android:weightSum="4"
-    tools:context="com.inc.miki.filozofski_falutet_pale.MainActivity">
-
-
+    android:layout_height="match_parent">
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:weightSum="4"
+        tools:context="com.inc.miki.filozofski_falutet_pale.MainActivity">
     <TextView
         android:layout_width="wrap_content"
         android:id="@+id/textureView"
@@ -18,30 +20,38 @@
         android:text="@string/searchBy"
         android:textSize="20sp"
         android:layout_height="wrap_content" />
+
     <Button
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:id="@+id/studyProgramTextView"
+        android:id="@+id/StudyProgramButton"
         android:layout_weight="0.20"
         android:layout_gravity="center"
         android:text="@string/searchByStudyPrograms"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:background="@color/clickedBackground"
+        android:onClick="SearchByStudyPrograms"/>
     <Button
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:id="@+id/TeacherTextView"
+        android:id="@+id/TeacherButton"
         android:layout_weight="0.20"
         android:layout_gravity="center"
         android:text="@string/searchByTeachers"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:background="@color/standardBackground"
+        android:onClick="SearchByTeachers"/>
     <Button
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:id="@+id/ClassRoomTextView"
+        android:id="@+id/ClassRoomButton"
         android:layout_weight="0.20"
         android:layout_gravity="center"
         android:text="@string/searchByClassRooms"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:background="@color/standardBackground"
+        android:onClick="SearchByClassRoom"/>
+
     <LinearLayout
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -52,19 +62,109 @@
 
 
         <TextView
-            android:text="@string/StudyPrograms"
             android:layout_height="wrap_content"
-            android:id="@+id/schedulesButton"
+            android:id="@+id/text1"
             android:layout_weight="1"
             android:layout_marginRight="1dp"
-            android:layout_width="150dp" />
+            android:layout_width="150dp"
+            tools:text="@string/StudyPrograms"/>
 
         <Spinner
-            android:layout_width="150dp"
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
-            android:id="@+id/spinner" />
+            android:id="@+id/spinner"
+            android:layout_weight="2"
+            style="@style/spinner_style"/>
 
     </LinearLayout>
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_gravity="center"
+        android:layout_width="300dp">
 
+
+        <Button
+            android:text="@string/firstYear"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/firstYear"
+            android:background="#428bca"
+            android:layout_weight="1"
+            android:layout_marginRight="1dp"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:text="@string/secondYear"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/secondYear"
+            android:background="#428bca"
+            android:layout_weight="1"
+            android:layout_marginLeft="1dp"
+            android:textColor="@android:color/white"/>
 
     </LinearLayout>
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_gravity="center"
+        android:layout_width="300dp"
+        android:layout_marginTop="1dp">
+
+
+        <Button
+            android:text="@string/thirdYear"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/thirdYear"
+            android:background="#428bca"
+            android:layout_weight="1"
+            android:layout_marginRight="1dp"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:text="@string/fourthYear"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/fourthYear"
+            android:background="#428bca"
+            android:layout_weight="1"
+            android:layout_marginLeft="1dp"
+            android:textColor="@android:color/white"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_width="300dp">
+
+
+        <TextView
+            android:text="@string/scheduleForWeek"
+            android:layout_height="wrap_content"
+            android:id="@+id/text2"
+            android:textSize="11dp"
+            android:layout_weight="1"
+            android:layout_marginRight="1dp"
+            android:layout_width="wrap_content" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="date"
+            android:ems="10"
+            android:id="@+id/DateEditText"
+            android:layout_weight="2"
+            android:focusable="false" />
+
+    </LinearLayout>
+    </LinearLayout>
+    </ScrollView>
+
+</android.support.v4.widget.SwipeRefreshLayout>
