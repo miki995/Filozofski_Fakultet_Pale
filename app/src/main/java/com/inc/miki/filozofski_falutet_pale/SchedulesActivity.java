@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -33,9 +34,9 @@ import static com.inc.miki.filozofski_falutet_pale.R.id.DateEditText;
 import static com.inc.miki.filozofski_falutet_pale.R.string.StudyPrograms;
 
 public class SchedulesActivity extends AppCompatActivity {
-     ArrayList<String> teachersList;
-     ArrayList<String> studyProgramsList;
-     ArrayList<String> classRoomsList;
+    ArrayList<String> teachersList;
+    ArrayList<String> studyProgramsList;
+    ArrayList<String> classRoomsList;
 
     static Calendar cal = Calendar.getInstance();
     static EditText dateEditText;
@@ -47,7 +48,10 @@ public class SchedulesActivity extends AppCompatActivity {
 
         TextView text = (TextView) findViewById(R.id.text1);
         text.setText(StudyPrograms);
-        SetDate();
+
+        Button currentWeek = (Button) findViewById(R.id.currentWeek);
+        currentWeek.performClick();
+
         dateEditText = (EditText) findViewById(R.id.DateEditText);
         dateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,7 +117,7 @@ public class SchedulesActivity extends AppCompatActivity {
         new GetStudyPrograms().execute();
     }
 
-    public void SetDate()
+    public void SetDate(View view)
     {
         Date date = new Date();
 
@@ -125,7 +129,7 @@ public class SchedulesActivity extends AppCompatActivity {
 
 
         Calendar last = (Calendar) first.clone();
-        last.add(Calendar.DAY_OF_YEAR, 6);
+        last.add(Calendar.DAY_OF_YEAR, 5);
 
 
         SimpleDateFormat df = new SimpleDateFormat("dd.MM");
@@ -147,7 +151,15 @@ public class SchedulesActivity extends AppCompatActivity {
 
             DatePickerDialog dpd = new DatePickerDialog(getActivity(),this,year,month,day);
 
-            dpd.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+            CalendarView cv = dpd.getDatePicker().getCalendarView(); // should check for null
+            long cur = cv.getDate();
+            int d = cv.getFirstDayOfWeek();
+            cv.setDate(cur + 1000L*60*60*24*30);
+            cv.setFirstDayOfWeek((d + 1) % 7);
+            cv.setDate(cur);
+            cv.setFirstDayOfWeek(d);
+            cv.setFirstDayOfWeek(Calendar.MONDAY);
+
             return dpd;
         }
 
@@ -163,7 +175,7 @@ public class SchedulesActivity extends AppCompatActivity {
 
 
             Calendar last = (Calendar) first.clone();
-            last.add(Calendar.DAY_OF_YEAR, 6);
+            last.add(Calendar.DAY_OF_YEAR, 5);
 
 
             SimpleDateFormat df = new SimpleDateFormat("dd.MM");
@@ -215,7 +227,7 @@ public class SchedulesActivity extends AppCompatActivity {
         classRoomButton.setBackgroundColor((ContextCompat.getColor(this,R.color.clickedBackground)));
         text.setText(R.string.ClassRooms);
 
-       new GetClassRooms().execute();
+        new GetClassRooms().execute();
     }
 
 
@@ -225,8 +237,7 @@ public class SchedulesActivity extends AppCompatActivity {
 
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            String TEACHERS_URL = "http://raspored.ffuis.edu.ba/breeze/data/Teachers?$orderby=FirstName%2CLastName&;$select=Id%2CFirstName%2CLastName";
-            String url = TEACHERS_URL;
+            String url = "http://raspored.ffuis.edu.ba/breeze/data/Teachers?$orderby=FirstName%2CLastName&;$select=Id%2CFirstName%2CLastName";
             String jsonStr = sh.makeServiceCall(url);
 
 
@@ -252,7 +263,7 @@ public class SchedulesActivity extends AppCompatActivity {
                         public void run() {
                             Toast.makeText(getApplicationContext(), "Json parsing error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                         }
-                });}
+                    });}
 
             } else {
                 runOnUiThread(new Runnable() {
@@ -285,8 +296,7 @@ public class SchedulesActivity extends AppCompatActivity {
 
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            String STUDY_PROGRAMS_URL = "http://raspored.ffuis.edu.ba/breeze/data/StudyPrograms?$orderby=Name&;$select=Id%2CName";
-            String url = STUDY_PROGRAMS_URL;
+            String url = "http://raspored.ffuis.edu.ba/breeze/data/StudyPrograms?$orderby=Name&;$select=Id%2CName";
             String jsonStr = sh.makeServiceCall(url);
 
 
@@ -314,7 +324,7 @@ public class SchedulesActivity extends AppCompatActivity {
                     });}
 
             } else {
-                 runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(),
@@ -343,8 +353,7 @@ public class SchedulesActivity extends AppCompatActivity {
 
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            String CLASS_ROOMS_URL = "http://raspored.ffuis.edu.ba/breeze/data/Classrooms?$orderby=Name&;$select=Id%2CName";
-            String url = CLASS_ROOMS_URL;
+            String url = "http://raspored.ffuis.edu.ba/breeze/data/Classrooms?$orderby=Name&;$select=Id%2CName";
             String jsonStr = sh.makeServiceCall(url);
 
 

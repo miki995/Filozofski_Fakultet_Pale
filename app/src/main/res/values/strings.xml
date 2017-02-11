@@ -18,6 +18,30 @@
     <string name="thirdYear">ТРЕЋА ГОДИНА</string>
     <string name="fourthYear">ЧЕТВРТА ГОДИНА</string>
     <string name="scheduleForWeek">РАСПОРЕД ЗА СЕДМИЦУ</string>
+    <string name="currentWeek">ТЕКУЋА </string>
+
+    <string name="monday">Пон</string>
+    <string name="tuesday">Уто</string>
+    <string name="wednesday">Сри</string>
+    <string name="thursday">Чет</string>
+    <string name="friday">Пет</string>
+    <string name="saturday">Суб</string>
+
+    <string name="t1">8:00 – 8:45</string>
+    <string name="t2">8:45 – 9:30</string>
+    <string name="t3">9:45 – 10:30а</string>
+    <string name="t4">10:30 – 11:15</string>
+    <string name="t5">11:30 – 12:15</string>
+    <string name="t6">12:15 – 13:00</string>
+    <string name="t7">13:00 – 14:00</string>
+    <string name="t8">14:00 – 14:45</string>
+    <string name="t9">14:45 – 15:30</string>
+    <string name="t10">15:45 – 16:30</string>
+    <string name="t11">16:30 – 17:15</string>
+    <string name="t12">17:30 – 18:15</string>
+    <string name="t13">18:15 – 19:00</string>
+    <string name="t14">19:90 – 19:45</string>
+
 
 
 
