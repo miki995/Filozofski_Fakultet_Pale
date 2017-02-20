@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
@@ -21,6 +22,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.inc.miki.filozofski_falutet_pale.Models.ClassRoom;
+import com.inc.miki.filozofski_falutet_pale.Models.StudyProgram;
+import com.inc.miki.filozofski_falutet_pale.Models.Teacher;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,12 +36,12 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static com.inc.miki.filozofski_falutet_pale.R.id.DateEditText;
-import static com.inc.miki.filozofski_falutet_pale.R.string.StudyPrograms;
+import static com.inc.miki.filozofski_falutet_pale.R.string.studyPrograms;
 
 public class SchedulesActivity extends AppCompatActivity {
-    ArrayList<String> teachersList;
-    ArrayList<String> studyProgramsList;
-    ArrayList<String> classRoomsList;
+    ArrayList<Teacher> teacherList;
+    ArrayList<StudyProgram> studyProgramList;
+    ArrayList<ClassRoom> classRoomList;
 
     static Calendar cal = Calendar.getInstance();
     static EditText dateEditText;
@@ -47,7 +52,7 @@ public class SchedulesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_schedules);
 
         TextView text = (TextView) findViewById(R.id.text1);
-        text.setText(StudyPrograms);
+        text.setText(studyPrograms);
 
         Button currentWeek = (Button) findViewById(R.id.currentWeek);
         currentWeek.performClick();
@@ -110,9 +115,9 @@ public class SchedulesActivity extends AppCompatActivity {
         });
 
 
-        teachersList = new ArrayList<>();
-        studyProgramsList = new ArrayList<>();
-        classRoomsList = new ArrayList<>();
+        teacherList = new ArrayList<>();
+        studyProgramList = new ArrayList<>();
+        classRoomList = new ArrayList<>();
 
         new GetStudyPrograms().execute();
     }
@@ -150,15 +155,18 @@ public class SchedulesActivity extends AppCompatActivity {
 
 
             DatePickerDialog dpd = new DatePickerDialog(getActivity(),this,year,month,day);
-
-            CalendarView cv = dpd.getDatePicker().getCalendarView(); // should check for null
-            long cur = cv.getDate();
-            int d = cv.getFirstDayOfWeek();
-            cv.setDate(cur + 1000L*60*60*24*30);
-            cv.setFirstDayOfWeek((d + 1) % 7);
-            cv.setDate(cur);
-            cv.setFirstDayOfWeek(d);
-            cv.setFirstDayOfWeek(Calendar.MONDAY);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                CalendarView cv = dpd.getDatePicker().getCalendarView(); // should check for null
+                long cur = cv.getDate();
+                int d = cv.getFirstDayOfWeek();
+                cv.setDate(cur + 1000L * 60 * 60 * 24 * 30);
+                cv.setFirstDayOfWeek((d + 1) % 7);
+                cv.setDate(cur);
+                cv.setFirstDayOfWeek(d);
+                cv.setFirstDayOfWeek(Calendar.MONDAY);
+            }else {
+                dpd.getDatePicker().setCalendarViewShown(false);
+            }
 
             return dpd;
         }
@@ -197,8 +205,9 @@ public class SchedulesActivity extends AppCompatActivity {
         studyProgramButton.setBackgroundColor((ContextCompat.getColor(this,R.color.clickedBackground)));
         teacherButton.setBackgroundColor((ContextCompat.getColor(this,R.color.standardBackground)));
         classRoomButton.setBackgroundColor((ContextCompat.getColor(this,R.color.standardBackground)));
-        text.setText(StudyPrograms);
+        text.setText(studyPrograms);
 
+        setYearsLayout();
         new GetStudyPrograms().execute();
     }
 
@@ -213,6 +222,7 @@ public class SchedulesActivity extends AppCompatActivity {
         classRoomButton.setBackgroundColor(ContextCompat.getColor(this,R.color.standardBackground));
         text.setText(R.string.Teachers);
 
+        removeYearsLayout();
         new GetTeachers().execute();
     }
 
@@ -227,6 +237,7 @@ public class SchedulesActivity extends AppCompatActivity {
         classRoomButton.setBackgroundColor((ContextCompat.getColor(this,R.color.clickedBackground)));
         text.setText(R.string.ClassRooms);
 
+        removeYearsLayout();
         new GetClassRooms().execute();
     }
 
@@ -237,7 +248,7 @@ public class SchedulesActivity extends AppCompatActivity {
 
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            String url = "http://raspored.ffuis.edu.ba/breeze/data/Teachers?$orderby=FirstName%2CLastName&;$select=Id%2CFirstName%2CLastName";
+            String url = "http://raspored.ffuis.edu.ba/breeze/data/Teachers?$orderby=FirstName%2CLastName&$select=Id%2CFirstName%2CLastName";
             String jsonStr = sh.makeServiceCall(url);
 
 
@@ -254,7 +265,7 @@ public class SchedulesActivity extends AppCompatActivity {
                             String lastName = c.getString("LastName");
                             int id = c.getInt("Id");
 
-                            teachersList.add(firstName + " " + lastName);
+                            teacherList.add(new Teacher(id,firstName,lastName));
                         }
                     }
                 } catch (final JSONException e) {
@@ -284,9 +295,9 @@ public class SchedulesActivity extends AppCompatActivity {
             super.onPostExecute(result);
 
             Spinner spinner = (Spinner) findViewById(R.id.spinner);
-            spinner.setAdapter(new ArrayAdapter<String>(SchedulesActivity.this,
+            spinner.setAdapter(new ArrayAdapter<>(SchedulesActivity.this,
                     android.R.layout.simple_spinner_dropdown_item,
-                    teachersList));
+                    teacherList));
 
         }
     }
@@ -296,7 +307,7 @@ public class SchedulesActivity extends AppCompatActivity {
 
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            String url = "http://raspored.ffuis.edu.ba/breeze/data/StudyPrograms?$orderby=Name&;$select=Id%2CName";
+            String url = "http://raspored.ffuis.edu.ba/breeze/data/StudyPrograms?$orderby=Name&$select=Id%2CName";
             String jsonStr = sh.makeServiceCall(url);
 
 
@@ -312,7 +323,7 @@ public class SchedulesActivity extends AppCompatActivity {
                             String name = c.getString("Name");
                             int id = c.getInt("Id");
 
-                            studyProgramsList.add(name);
+                            studyProgramList.add(new StudyProgram(id,name));
                         }
                     }
                 } catch (final JSONException e) {
@@ -341,9 +352,9 @@ public class SchedulesActivity extends AppCompatActivity {
             super.onPostExecute(result);
 
             Spinner spinner = (Spinner) findViewById(R.id.spinner);
-            spinner.setAdapter(new ArrayAdapter<String>(SchedulesActivity.this,
+            spinner.setAdapter(new ArrayAdapter<>(SchedulesActivity.this,
                     android.R.layout.simple_spinner_dropdown_item,
-                    studyProgramsList));
+                    studyProgramList));
 
         }
     }
@@ -369,7 +380,7 @@ public class SchedulesActivity extends AppCompatActivity {
                             String name = c.getString("Name");
                             int id = c.getInt("Id");
 
-                            classRoomsList.add(name);
+                            classRoomList.add(new ClassRoom(id,name));
                         }
                     }
                 } catch (final JSONException e) {
@@ -398,10 +409,20 @@ public class SchedulesActivity extends AppCompatActivity {
             super.onPostExecute(result);
 
             Spinner spinner = (Spinner) findViewById(R.id.spinner);
-            spinner.setAdapter(new ArrayAdapter<String>(SchedulesActivity.this,
+            spinner.setAdapter(new ArrayAdapter<>(SchedulesActivity.this,
                     android.R.layout.simple_spinner_dropdown_item,
-                    classRoomsList));
+                    classRoomList));
 
         }
+    }
+
+
+    public void setYearsLayout(){
+        findViewById(R.id.years1).setVisibility(View.VISIBLE);
+        findViewById(R.id.years2).setVisibility(View.VISIBLE);
+    }
+    public void removeYearsLayout(){
+        findViewById(R.id.years1).setVisibility(View.GONE);
+        findViewById(R.id.years2).setVisibility(View.GONE);
     }
 }
