@@ -20,14 +20,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
 
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="play.google.com"
-                    android:pathPrefix="/store/apps/details?id=com.inc.miki.filozofski_falutet_pale"
-                    android:scheme="http" />
             </intent-filter>
         </activity>
         <activity android:label = "@string/app_name" android:name=".MainActivity"/>

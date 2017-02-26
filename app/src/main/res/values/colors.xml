@@ -7,6 +7,8 @@
     <color name="clickedBackground">#b3b8bf</color>
     <color name="standardBackground">#cbd1db</color>
 
+    <color name="blueBackground">#428bca</color>
+
 
 
 </resources>

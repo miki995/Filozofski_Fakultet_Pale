@@ -9,8 +9,8 @@ public class ClassRoom {
     private String Name;
 
 
-    private int getId() { return Id; }
-    private String getName(){return Name;}
+    public int getId() { return Id; }
+    public String getName(){return Name;}
 
     private void setId(int value){Id = value;}
     private void setName(String value){Name = value;}

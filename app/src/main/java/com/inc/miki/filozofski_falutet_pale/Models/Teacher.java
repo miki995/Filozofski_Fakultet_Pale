@@ -11,9 +11,9 @@ public class Teacher {
         private String LastName;
 
 
-        private int getId() { return Id; }
-        private String getFirstName(){return FirstName;}
-        private String getLastName(){return LastName;}
+        public int getId() { return Id; }
+        public String getFirstName(){return FirstName;}
+        public String getLastName(){return LastName;}
 
         private void setId(int value){Id = value;}
         private void setFirstName(String value){FirstName = value;}

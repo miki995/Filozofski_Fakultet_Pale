@@ -91,8 +91,9 @@
             android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:id="@+id/firstYear"
-            android:background="#428bca"
+            android:background="@color/clickedBackground"
             android:layout_weight="1"
+            android:onClick="firstYearClick"
             android:layout_marginRight="1dp"
             android:textColor="@android:color/white" />
 
@@ -101,8 +102,9 @@
             android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:id="@+id/secondYear"
-            android:background="#428bca"
+            android:background="@color/blueBackground"
             android:layout_weight="1"
+            android:onClick="secondYearClick"
             android:layout_marginLeft="1dp"
             android:textColor="@android:color/white"/>
 
@@ -122,8 +124,9 @@
             android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:id="@+id/thirdYear"
-            android:background="#428bca"
+            android:background="@color/blueBackground"
             android:layout_weight="1"
+            android:onClick="thirdYearClick"
             android:layout_marginRight="1dp"
             android:textColor="@android:color/white" />
 
@@ -132,8 +135,9 @@
             android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:id="@+id/fourthYear"
-            android:background="#428bca"
+            android:background="@color/blueBackground"
             android:layout_weight="1"
+            android:onClick="fourthYearClick"
             android:layout_marginLeft="1dp"
             android:textColor="@android:color/white"/>
 
@@ -175,6 +179,14 @@
                 android:layout_weight="1"
                 android:focusable="false" />
 
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/miki"/>
         </LinearLayout>
 
         <TableLayout

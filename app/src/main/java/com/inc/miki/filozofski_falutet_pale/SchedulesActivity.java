@@ -12,7 +12,10 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
@@ -46,6 +49,11 @@ public class SchedulesActivity extends AppCompatActivity {
     static Calendar cal = Calendar.getInstance();
     static EditText dateEditText;
 
+    public String getCurrentDate(){
+    return  dateEditText.getText().toString();
+    }
+    public int getCurrentPosition(){Spinner spinner1 = (Spinner)findViewById(R.id.spinner);return  spinner1.getSelectedItemPosition();}
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +61,8 @@ public class SchedulesActivity extends AppCompatActivity {
 
         TextView text = (TextView) findViewById(R.id.text1);
         text.setText(studyPrograms);
+
+
 
         Button currentWeek = (Button) findViewById(R.id.currentWeek);
         currentWeek.performClick();
@@ -65,6 +75,16 @@ public class SchedulesActivity extends AppCompatActivity {
                 showDatePickerDialog(v);
             }
         });
+
+
+        teacherList = new ArrayList<>();
+        studyProgramList = new ArrayList<>();
+        classRoomList = new ArrayList<>();
+
+        new GetStudyPrograms().execute();
+
+
+
         final SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         swipeLayout.setColorSchemeColors(Color.parseColor("#6ED3F5"), Color.parseColor("#30B1DB"),Color.parseColor("#0A6A8A"), Color.parseColor("#054257"));
 
@@ -88,19 +108,24 @@ public class SchedulesActivity extends AppCompatActivity {
 
                         int clickedColor = ContextCompat.getColor(getApplicationContext(), R.color.clickedBackground);
 
+                        Button b = (Button) findViewById(R.id.firstYear);
+
                         if(studyProgramColorId == clickedColor)
                         {
                             new GetStudyPrograms().execute();
+                            b.performClick();
                             swipeLayout.setRefreshing(false);
                         }
                         else if(teachersColorId == clickedColor)
                         {
                             new GetTeachers().execute();
+                            GetURL(1);
                             swipeLayout.setRefreshing(false);
                         }
                         else if(classRoomsColorId == clickedColor)
                         {
                             new GetClassRooms().execute();
+                            GetURL(1);
                             swipeLayout.setRefreshing(false);
                         }
                         else
@@ -114,12 +139,123 @@ public class SchedulesActivity extends AppCompatActivity {
             }
         });
 
+        dateEditText.addTextChangedListener(new TextWatcher() {
 
-        teacherList = new ArrayList<>();
-        studyProgramList = new ArrayList<>();
-        classRoomList = new ArrayList<>();
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
 
-        new GetStudyPrograms().execute();
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                Button b = (Button) findViewById(R.id.firstYear);
+                b.performClick();
+            }
+        });
+        Spinner spinner2 = (Spinner) findViewById(R.id.spinner);
+        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                Button b = (Button) findViewById(R.id.firstYear);
+                b.performClick();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+
+
+
+
+    }
+
+    public String GetURL(int numOfYear){
+        String URL = "";
+        Button studyProgramButton = (Button) findViewById(R.id.StudyProgramButton);
+        ColorDrawable studyProgramButtonBackground = (ColorDrawable) studyProgramButton.getBackground();
+        int studyProgramColorId = studyProgramButtonBackground.getColor();
+
+        Button teacherButton = (Button) findViewById(R.id.TeacherButton);
+        ColorDrawable teacherButtonBackground = (ColorDrawable)teacherButton.getBackground();
+        int teachersColorId = teacherButtonBackground.getColor();
+
+        Button classRoomButton = (Button) findViewById(R.id.ClassRoomButton);
+        ColorDrawable classRoomButtonBackground = (ColorDrawable)classRoomButton.getBackground();
+        int classRoomsColorId = classRoomButtonBackground.getColor();
+
+        int clickedColor = ContextCompat.getColor(getApplicationContext(), R.color.clickedBackground);
+
+
+
+        String Date = getCurrentDate();
+        String[] parts = Date.split(" - ");
+        Calendar now = Calendar.getInstance();
+        int year = now.get(Calendar.YEAR);
+        String firstWeek = String.valueOf(year) + "-" + parts[0];
+        String lastWeek = String.valueOf(year) + "-" +  parts[1];
+
+        if(studyProgramColorId == clickedColor &&  studyProgramList.size() > 0)
+        {
+
+            StudyProgram s = studyProgramList.get(getCurrentPosition());
+
+            String Base1 = "http://raspored.ffuis.edu.ba/breeze/data/Schedules?$filter=((StudyProgramId%20eq%20";
+            String StudyProgramId = String.valueOf(s.getId());
+            String Base2 = ")%20and%20(Date%20ge%20datetime%27";
+            String Base3 = "T23%3A00%3A00.000Z%27)%20and%20(Date%20le%20datetime%27";
+            String Base4 = "T22%3A59%3A59.999Z%27))%20and%20(YearOfStudy%20eq%20";
+            String Base5 = ")&$orderby=Date&$expand=ScheduleItems%2FCourse%2CScheduleItems%2FTeacher%2CScheduleItems%2FClassroom";
+
+             URL = Base1 + StudyProgramId + Base2 + firstWeek + Base3 + lastWeek + Base4 + numOfYear + Base5 ;
+
+
+            EditText e = (EditText) findViewById(R.id.miki);
+            e.setText(URL);
+        }
+        else if(teachersColorId == clickedColor && teacherList.size() > 0)
+        {
+            Teacher t = teacherList.get(getCurrentPosition());
+
+            String Base1 = "http://raspored.ffuis.edu.ba/breeze/data/Schedules?$filter=(ScheduleItems%2Fany(x1%3A%20x1%2FTeacherId%20eq%20";
+            String TeacherId = String.valueOf(t.getId());
+            String Base2 = "))%20and%20((Date%20ge%20datetime%27";
+            String Base3 = "T23%3A00%3A00.000Z%27)%20and%20(Date%20le%20datetime%27";
+            String Base4 = "T22%3A59%3A59.999Z%27))&$orderby=Date&$expand=ScheduleItems%2FTeacher%2CScheduleItems%2FClassroom%2CScheduleItems%2FCourse";
+
+             URL = Base1 + TeacherId + Base2 + firstWeek + Base3 + lastWeek + Base4;
+
+
+            EditText e = (EditText) findViewById(R.id.miki);
+            e.setText(URL);
+        }
+        else if(classRoomsColorId == clickedColor && classRoomList.size() > 0)
+        {
+            ClassRoom c = classRoomList.get(getCurrentPosition());
+
+            String Base1 = "http://raspored.ffuis.edu.ba/breeze/data/Schedules?$filter=(ScheduleItems%2Fany(x1%3A%20x1%2FClassroomId%20eq%20";
+            String ClassRoomId = String.valueOf(c.getId());
+            String Base2 = "))%20and%20((Date%20ge%20datetime%27";
+            String Base3 = "T23%3A00%3A00.000Z%27)%20and%20(Date%20le%20datetime%27";
+            String Base4 = "T22%3A59%3A59.999Z%27))&$orderby=Date&$expand=ScheduleItems%2FTeacher%2CScheduleItems%2FClassroom%2CScheduleItems%2FCourse";
+
+             URL = Base1 + ClassRoomId + Base2 + firstWeek + Base3 + lastWeek + Base4;
+
+
+            EditText e = (EditText) findViewById(R.id.miki);
+            e.setText(URL);
+
+        }
+
+
+        return  URL;
     }
 
     public void SetDate(View view)
@@ -137,10 +273,55 @@ public class SchedulesActivity extends AppCompatActivity {
         last.add(Calendar.DAY_OF_YEAR, 5);
 
 
-        SimpleDateFormat df = new SimpleDateFormat("dd.MM");
-
+        SimpleDateFormat df = new SimpleDateFormat("MM-dd");
         EditText editText = (EditText) findViewById(DateEditText) ;
         editText.setText(df.format(first.getTime()) + " - " + df.format(last.getTime()));
+    }
+
+    public void firstYearClick(View view) {
+        Button firstYear = (Button) findViewById(R.id.firstYear);
+        Button secondYear = (Button) findViewById(R.id.secondYear);
+        Button thirdYear = (Button) findViewById(R.id.thirdYear);
+        Button fourthYear = (Button) findViewById(R.id.fourthYear);
+        firstYear.setBackgroundColor((ContextCompat.getColor(this,R.color.clickedBackground)));
+        secondYear.setBackgroundColor((ContextCompat.getColor(this,R.color.blueBackground)));
+        thirdYear.setBackgroundColor((ContextCompat.getColor(this,R.color.blueBackground)));
+        fourthYear.setBackgroundColor((ContextCompat.getColor(this,R.color.blueBackground)));
+        GetURL(1);
+    }
+    public void secondYearClick(View view) {
+        Button firstYear = (Button) findViewById(R.id.firstYear);
+        Button secondYear = (Button) findViewById(R.id.secondYear);
+        Button thirdYear = (Button) findViewById(R.id.thirdYear);
+        Button fourthYear = (Button) findViewById(R.id.fourthYear);
+        firstYear.setBackgroundColor((ContextCompat.getColor(this,R.color.blueBackground)));
+        secondYear.setBackgroundColor((ContextCompat.getColor(this,R.color.clickedBackground)));
+        thirdYear.setBackgroundColor((ContextCompat.getColor(this,R.color.blueBackground)));
+        fourthYear.setBackgroundColor((ContextCompat.getColor(this,R.color.blueBackground)));
+        GetURL(2);
+
+    }
+    public void thirdYearClick(View view) {
+        Button firstYear = (Button) findViewById(R.id.firstYear);
+        Button secondYear = (Button) findViewById(R.id.secondYear);
+        Button thirdYear = (Button) findViewById(R.id.thirdYear);
+        Button fourthYear = (Button) findViewById(R.id.fourthYear);
+        firstYear.setBackgroundColor((ContextCompat.getColor(this,R.color.blueBackground)));
+        secondYear.setBackgroundColor((ContextCompat.getColor(this,R.color.blueBackground)));
+        thirdYear.setBackgroundColor((ContextCompat.getColor(this,R.color.clickedBackground)));
+        fourthYear.setBackgroundColor((ContextCompat.getColor(this,R.color.blueBackground)));
+        GetURL(3);
+    }
+    public void fourthYearClick(View view) {
+        Button firstYear = (Button) findViewById(R.id.firstYear);
+        Button secondYear = (Button) findViewById(R.id.secondYear);
+        Button thirdYear = (Button) findViewById(R.id.thirdYear);
+        Button fourthYear = (Button) findViewById(R.id.fourthYear);
+        firstYear.setBackgroundColor((ContextCompat.getColor(this,R.color.blueBackground)));
+        secondYear.setBackgroundColor((ContextCompat.getColor(this,R.color.blueBackground)));
+        thirdYear.setBackgroundColor((ContextCompat.getColor(this,R.color.blueBackground)));
+        fourthYear.setBackgroundColor((ContextCompat.getColor(this,R.color.clickedBackground)));
+        GetURL(4);
     }
 
     public static class DatePickerFragment extends DialogFragment
@@ -186,7 +367,7 @@ public class SchedulesActivity extends AppCompatActivity {
             last.add(Calendar.DAY_OF_YEAR, 5);
 
 
-            SimpleDateFormat df = new SimpleDateFormat("dd.MM");
+            SimpleDateFormat df = new SimpleDateFormat("MM-dd");
             dateEditText.setText(df.format(first.getTime()) + " - " + df.format(last.getTime()));
 
 
@@ -247,7 +428,6 @@ public class SchedulesActivity extends AppCompatActivity {
         protected Void doInBackground(Void... arg0) {
 
             HttpHandler sh = new HttpHandler();
-            // Making a request to url and getting response
             String url = "http://raspored.ffuis.edu.ba/breeze/data/Teachers?$orderby=FirstName%2CLastName&$select=Id%2CFirstName%2CLastName";
             String jsonStr = sh.makeServiceCall(url);
 
@@ -306,7 +486,6 @@ public class SchedulesActivity extends AppCompatActivity {
         protected Void doInBackground(Void... arg0) {
 
             HttpHandler sh = new HttpHandler();
-            // Making a request to url and getting response
             String url = "http://raspored.ffuis.edu.ba/breeze/data/StudyPrograms?$orderby=Name&$select=Id%2CName";
             String jsonStr = sh.makeServiceCall(url);
 
@@ -356,14 +535,16 @@ public class SchedulesActivity extends AppCompatActivity {
                     android.R.layout.simple_spinner_dropdown_item,
                     studyProgramList));
 
+
         }
     }
-    private  class GetClassRooms   extends AsyncTask<Void, Void, Void> {
+    private  class GetClassRooms  extends AsyncTask<Void, Void, Void> {
+
+
         @Override
         protected Void doInBackground(Void... arg0) {
 
             HttpHandler sh = new HttpHandler();
-            // Making a request to url and getting response
             String url = "http://raspored.ffuis.edu.ba/breeze/data/Classrooms?$orderby=Name&;$select=Id%2CName";
             String jsonStr = sh.makeServiceCall(url);
 
@@ -424,5 +605,50 @@ public class SchedulesActivity extends AppCompatActivity {
     public void removeYearsLayout(){
         findViewById(R.id.years1).setVisibility(View.GONE);
         findViewById(R.id.years2).setVisibility(View.GONE);
+    }
+
+    private  class FillClassRooms  extends AsyncTask<String, Void, Void> {
+
+
+        @Override
+        protected Void doInBackground(String... strings) {
+
+            HttpHandler sh = new HttpHandler();
+            String url = strings[0];
+            String jsonStr = sh.makeServiceCall(url);
+
+
+            if (jsonStr != null) {
+                try {
+
+                    JSONArray classRooms = new JSONArray(jsonStr);
+
+                } catch (final JSONException e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Json parsing error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });}
+
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Интернет конекција није пронаћена, повуците надоле ѕа освјежавање!",
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+
+
+        }
     }
 }
