@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1087622147033",
+    "firebase_url": "https://filozofskipale.firebaseio.com",
+    "project_id": "filozofskipale",
+    "storage_bucket": "filozofskipale.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1087622147033:android:c5d02355a3e91051",
+        "android_client_info": {
+          "package_name": "com.inc.miki.filozofski_falutet_pale"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1087622147033-11f8ol30g4f8j1kq7meo1kpkh2ehd14u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCSIFNURwx5n6gFYUC-wG1WAHpiug0SJY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
